@@ -6,11 +6,6 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repo') {
-            steps {
-                git 'https://github.com/Dhananjay032003/devops-nodejs-ci-cd.git'
-            }
-        }
 
         stage('Install Dependencies') {
             steps {
