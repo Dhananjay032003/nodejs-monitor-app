@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'node18'
-    }
-
     stages {
 
         stage('Clone Repository') {
@@ -16,22 +12,26 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                sh '''
+                npm install
+                cd examples
+                npm install
+                '''
             }
         }
 
         stage('Test') {
             steps {
-                echo 'No tests configured for this project'
+                echo 'No tests configured'
             }
         }
 
-        stage('Run Application') {
+        stage('Run Application with PM2') {
             steps {
                 sh '''
                 npm install -g pm2 || true
                 pm2 delete status-monitor || true
-                pm2 start examples/index.js --name status-monitor
+                pm2 start examples/express.js --name status-monitor
                 pm2 save
                 '''
             }
