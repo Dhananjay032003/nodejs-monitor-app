@@ -29,7 +29,6 @@ pipeline {
         stage('Run Application with PM2') {
             steps {
                 sh '''
-                npm install -g pm2 || true
                 pm2 delete status-monitor || true
                 pm2 start examples/express.js --name status-monitor
                 pm2 save
