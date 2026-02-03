@@ -7,6 +7,12 @@ pipeline {
 
     stages {
 
+        stage('Clone Repo') {
+            steps {
+                git 'https://github.com/Dhananjay032003/nodejs-monitor-app.git'
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 sh 'npm install'
@@ -22,8 +28,9 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
+                export PATH=$PATH:/usr/bin
                 pm2 delete status-monitor || true
-                pm2 start examples/express.js --name status-monitor
+                pm2 start examples/index.js --name status-monitor
                 pm2 save
                 '''
             }
