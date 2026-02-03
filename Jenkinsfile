@@ -7,9 +7,10 @@ pipeline {
 
     stages {
 
-        stage('Clone Repo') {
+        stage('Clone Repository') {
             steps {
-                git 'https://github.com/Dhananjay032003/nodejs-monitor-app.git'
+                git branch: 'main',
+                    url: 'https://github.com/Dhananjay032003/nodejs-monitor-app.git'
             }
         }
 
@@ -21,14 +22,14 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'npm test || echo "No tests available"'
+                echo 'No tests configured for this project'
             }
         }
 
-        stage('Deploy') {
+        stage('Run Application') {
             steps {
                 sh '''
-                export PATH=$PATH:/usr/bin
+                npm install -g pm2 || true
                 pm2 delete status-monitor || true
                 pm2 start examples/index.js --name status-monitor
                 pm2 save
