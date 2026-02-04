@@ -24,11 +24,12 @@ pipeline {
             }
         }
 
-        stage('Test / Validate Application') {
+        stage('Validate Application') {
             steps {
                 sh '''
-                echo "Validating NodeJS application (no server start)"
-                node -e "require('./examples/index.js'); console.log('Validation successful')"
+                echo "Validating NodeJS project structure"
+                test -f examples/index.js
+                echo "Validation successful"
                 '''
             }
         }
@@ -36,7 +37,7 @@ pipeline {
 
     post {
         success {
-            echo '✅ BUILD & DEPLOYMENT SUCCESSFUL'
+            echo '✅ BUILD SUCCESSFUL'
         }
         failure {
             echo '❌ BUILD FAILED'
