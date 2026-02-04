@@ -24,18 +24,11 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                echo 'No tests configured for this project'
-            }
-        }
-
-        stage('Run Application') {
+        stage('Test / Validate Application') {
             steps {
                 sh '''
-                echo "Running NodeJS monitoring application"
-                cd examples
-                node index.js
+                echo "Validating NodeJS application (no server start)"
+                node -e "require('./examples/index.js'); console.log('Validation successful')"
                 '''
             }
         }
