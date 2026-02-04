@@ -5,6 +5,7 @@ pipeline {
 
         stage('Clone Repository') {
             steps {
+                echo 'Cloning GitHub repository'
                 git branch: 'main',
                     url: 'https://github.com/Dhananjay032003/nodejs-monitor-app.git'
             }
@@ -13,7 +14,10 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
+                echo "Installing root dependencies"
                 npm install
+
+                echo "Installing example dependencies"
                 cd examples
                 npm install
                 '''
@@ -22,18 +26,27 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo 'No tests configured'
+                echo 'No tests configured for this project'
             }
         }
 
-        stage('Run Application with PM2') {
+        stage('Run Application') {
             steps {
                 sh '''
-                pm2 delete status-monitor || true
-                pm2 start examples/express.js --name status-monitor
-                pm2 save
+                echo "Running NodeJS monitoring application"
+                cd examples
+                node index.js
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ BUILD & DEPLOYMENT SUCCESSFUL'
+        }
+        failure {
+            echo '❌ BUILD FAILED'
         }
     }
 }
