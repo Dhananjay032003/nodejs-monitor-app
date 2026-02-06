@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        stage('Install NodeJS & npm') {
+        stage('Install NodeJS') {
             steps {
                 sh '''
                 if ! command -v node >/dev/null 2>&1; then
@@ -45,11 +45,11 @@ pipeline {
             }
         }
 
-        stage('Install Example App Dependencies') {
+        stage('Install Example Dependencies') {
             steps {
                 dir('examples') {
                     sh '''
-                    echo "Installing example dependencies"
+                    echo "Installing example app dependencies"
                     npm install
                     '''
                 }
@@ -60,7 +60,7 @@ pipeline {
             steps {
                 dir('examples') {
                     sh '''
-                    echo "Starting example app on port 3000"
+                    echo "Starting example app"
                     nohup npm start > app.log 2>&1 &
                     sleep 8
                     '''
@@ -71,5 +71,20 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 sh '''
-                echo "Checking if app is running on port 3000"
-                ss -tulnp | grep 300
+                echo "Verifying application on port 3000"
+                ss -tulnp | grep 3000
+                curl -I http://localhost:3000
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ PIPELINE SUCCESS – APP DEPLOYED'
+        }
+        failure {
+            echo '❌ PIPELINE FAILED'
+        }
+    }
+}
