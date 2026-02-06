@@ -1,39 +1,53 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'node18'
-    }
-
     stages {
 
-        stage('Clone Repository') {
+        stage('Checkout Code') {
             steps {
-                echo 'Cloning GitHub repository'
+                echo 'Cloning repository'
                 git branch: 'main',
                     url: 'https://github.com/Dhananjay032003/nodejs-monitor-app.git'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Install Root Dependencies') {
             steps {
                 sh '''
                 echo "Installing root dependencies"
                 npm install
+                '''
+            }
+        }
 
-                echo "Installing example dependencies"
+        stage('Install Example App Dependencies') {
+            steps {
+                sh '''
+                echo "Installing example app dependencies"
                 cd examples
                 npm install
                 '''
             }
         }
 
-        stage('Validate Application') {
+        stage('Validate Project Structure') {
             steps {
                 sh '''
-                echo "Validating NodeJS project structure"
-                test -f examples/index.js
+                echo "Validating project structure"
+                test -d examples
+                test -f examples/package.json
                 echo "Validation successful"
+                '''
+            }
+        }
+
+        stage('Run Example App (Non-blocking)') {
+            steps {
+                sh '''
+                echo "Starting example app"
+                cd examples
+                nohup npm start > app.log 2>&1 &
+                sleep 5
                 '''
             }
         }
@@ -41,10 +55,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ BUILD SUCCESSFUL'
+            echo '✅ PIPELINE COMPLETED SUCCESSFULLY'
         }
         failure {
-            echo '❌ BUILD FAILED'
+            echo '❌ PIPELINE FAILED'
         }
     }
 }
