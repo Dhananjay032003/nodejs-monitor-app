@@ -272,6 +272,8 @@ The screenshots/ directory contains:
 
 
 # Monitoring outputs (top, pm2 status, df -h)
+<img width="652" height="1156" alt="image" src="https://github.com/user-attachments/assets/0b3f03cb-f963-4de7-9cb3-d4adca5be4fc" />
+
 <img width="1835" height="596" alt="image" src="https://github.com/user-attachments/assets/47b03da7-e3da-46c4-8f49-5de4b76fd333" />
 <img width="996" height="597" alt="image" src="https://github.com/user-attachments/assets/ae25876b-8028-4f6a-9240-aa6479ec5ac3" />
 <img width="1105" height="623" alt="image" src="https://github.com/user-attachments/assets/a74fae34-3402-4e62-a991-939f5c143257" />
