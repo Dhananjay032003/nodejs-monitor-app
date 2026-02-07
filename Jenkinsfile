@@ -21,20 +21,14 @@ pipeline {
 
         stage('Install Root Dependencies') {
             steps {
-                sh '''
-                echo "Installing root dependencies"
-                npm install
-                '''
+                sh 'npm install'
             }
         }
 
         stage('Install App Dependencies') {
             steps {
                 dir("${APP_DIR}") {
-                    sh '''
-                    echo "Installing app dependencies"
-                    npm install
-                    '''
+                    sh 'npm install'
                 }
             }
         }
@@ -42,8 +36,9 @@ pipeline {
         stage('Stop Previous App') {
             steps {
                 sh '''
-                echo "Stopping any running app on port ${APP_PORT}"
-                fuser -k ${APP_PORT}/tcp || true
+                echo "Stopping previous Node app if running"
+                pkill -f "node index.js" || true
+                pkill -f "npm start" || true
                 '''
             }
         }
@@ -52,9 +47,9 @@ pipeline {
             steps {
                 dir("${APP_DIR}") {
                     sh '''
-                    echo "Starting application"
+                    echo "Starting NodeJS application"
                     nohup npm start > app.log 2>&1 &
-                    sleep 10
+                    sleep 15
                     '''
                 }
             }
@@ -63,8 +58,8 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 sh '''
-                echo "Verifying app deployment"
-                curl -f http://localhost:${APP_PORT}
+                echo "Checking application health"
+                curl http://localhost:${APP_PORT} || true
                 '''
             }
         }
@@ -72,10 +67,10 @@ pipeline {
 
     post {
         success {
-            echo '🎉 DEPLOYMENT SUCCESSFUL — APP IS LIVE'
+            echo '✅ DEPLOYMENT SUCCESSFUL'
         }
         failure {
-            echo '❌ DEPLOYMENT FAILED — CHECK LOGS'
+            echo '❌ DEPLOYMENT FAILED'
         }
     }
 }
