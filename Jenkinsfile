@@ -1,38 +1,21 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'node18'
+    }
+
     environment {
         APP_PORT = "3000"
+        APP_DIR  = "examples"
     }
 
     stages {
 
-        stage('Clean Workspace') {
-            steps {
-                cleanWs()
-                echo 'Workspace cleaned'
-            }
-        }
-
         stage('Checkout Code') {
             steps {
-                echo 'Cloning repository'
                 git branch: 'main',
                     url: 'https://github.com/Dhananjay032003/nodejs-monitor-app.git'
-            }
-        }
-
-        stage('Install NodeJS') {
-            steps {
-                sh '''
-                if ! command -v node >/dev/null 2>&1; then
-                  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-                  sudo apt-get install -y nodejs
-                fi
-
-                node -v
-                npm -v
-                '''
             }
         }
 
@@ -45,24 +28,33 @@ pipeline {
             }
         }
 
-        stage('Install Example Dependencies') {
+        stage('Install App Dependencies') {
             steps {
-                dir('examples') {
+                dir("${APP_DIR}") {
                     sh '''
-                    echo "Installing example app dependencies"
+                    echo "Installing app dependencies"
                     npm install
                     '''
                 }
             }
         }
 
-        stage('Start Example App') {
+        stage('Stop Previous App') {
             steps {
-                dir('examples') {
+                sh '''
+                echo "Stopping any running app on port ${APP_PORT}"
+                fuser -k ${APP_PORT}/tcp || true
+                '''
+            }
+        }
+
+        stage('Start Application') {
+            steps {
+                dir("${APP_DIR}") {
                     sh '''
-                    echo "Starting example app"
+                    echo "Starting application"
                     nohup npm start > app.log 2>&1 &
-                    sleep 8
+                    sleep 10
                     '''
                 }
             }
@@ -71,9 +63,8 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 sh '''
-                echo "Verifying application on port 3000"
-                ss -tulnp | grep 3000
-                curl -I http://localhost:3000
+                echo "Verifying app deployment"
+                curl -f http://localhost:${APP_PORT}
                 '''
             }
         }
@@ -81,10 +72,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ PIPELINE SUCCESS – APP DEPLOYED'
+            echo '🎉 DEPLOYMENT SUCCESSFUL — APP IS LIVE'
         }
         failure {
-            echo '❌ PIPELINE FAILED'
+            echo '❌ DEPLOYMENT FAILED — CHECK LOGS'
         }
     }
 }
