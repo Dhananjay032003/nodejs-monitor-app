@@ -170,41 +170,64 @@ All scripts are stored in the scripts/ directory.
 
 ## 📄 scripts/install-jenkins.sh
 #!/bin/bash
+
 sudo apt update
+
 sudo apt install -y openjdk-17-jdk
-wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+
+wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key |sudo apt-key add -
 sudo sh -c 'echo deb https://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
+
 sudo apt update
+
 sudo apt install -y jenkins
+
 sudo systemctl start jenkins
+
 sudo systemctl enable jenkins
 
 ## 📄 scripts/install-node-pm2.sh
+
 #!/bin/bash
+
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+
 sudo apt install -y nodejs
+
 sudo npm install -g pm2
 
 ## 📄 scripts/install-nginx.sh
+
 #!/bin/bash
+
 sudo apt update
+
 sudo apt install -y nginx
+
 sudo systemctl start nginx
+
 sudo systemctl enable nginx
 
 ## 📄 scripts/duckdns.sh
+
 #!/bin/bash
+
 curl "https://www.duckdns.org/update?domains=devlogin-dj&token=YOUR_TOKEN&ip="
 
 ## 📄 scripts/monitoring.sh
+
 #!/bin/bash
+
 echo "CPU & Memory Usage"
+
 top -bn1 | head -20
 
 echo "Disk Usage"
+
 df -h
 
 echo "PM2 Status"
+
 pm2 status
 
 # 📁 Configuration Files
